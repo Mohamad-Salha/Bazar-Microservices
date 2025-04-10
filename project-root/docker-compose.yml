@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - catalog
+      - order
+
+  catalog:
+    build:
+      context: ./catalog
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./catalog/catalog.db:/app/catalog.db
+    depends_on:
+      - order
+
+  order:
+    build:
+      context: ./order
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./order/orders.log:/app/orders.log
