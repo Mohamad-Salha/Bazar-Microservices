@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  catalog:
+    build:
+      context: .
+      dockerfile: Dockerfile.catalog
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./catalog.db:/app/catalog.db
+    networks:
+      - bazar-network
+
+  order:
+    build:
+      context: .
+      dockerfile: Dockerfile.order
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./order.db:/app/order.db
+    environment:
+      - CATALOG_SERVICE_URL=http://catalog:5001
+    depends_on:
+      - catalog
+    networks:
+      - bazar-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5000:5000"
+    environment:
+      - CATALOG_SERVICE_URL=http://catalog:5001
+      - ORDER_SERVICE_URL=http://order:5002
+    depends_on:
+      - catalog
+      - order
+    networks:
+      - bazar-network
+
+networks:
+  bazar-network:
+    driver: bridge
