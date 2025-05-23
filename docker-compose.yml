@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  catalog:
+    build: ./catalog
+    volumes:
+      - ./catalog/catalog.txt:/app/catalog.txt
+    ports:
+      - "5001:5001"
+
+  order:
+    build: ./order
+    volumes:
+      - ./order/orders.log:/app/orders.log
+    ports:
+      - "5002:5002"
+    depends_on:
+      - catalog
+
+  front:
+    build: ./front
+    stdin_open: true
+    tty: true
+    depends_on:
+      - catalog
+      - order
+
+  admin:
+    build: ./admin
+    stdin_open: true
+    tty: true
+    depends_on:
+      - order
+      - catalog
