@@ -1,34 +1,56 @@
 version: "3.8"
 
 services:
-  catalog:
+  catalog1:
     build: ./catalog
     volumes:
       - ./catalog/catalog.txt:/app/catalog.txt
     ports:
       - "5001:5001"
 
-  order:
+  catalog2:
+    build: ./catalog
+    volumes:
+      - ./catalog/catalog.txt:/app/catalog.txt
+    ports:
+      - "5003:5001"  
+
+  order1:
     build: ./order
     volumes:
       - ./order/orders.log:/app/orders.log
     ports:
       - "5002:5002"
     depends_on:
-      - catalog
+      - catalog1
+    environment:
+      - CATALOG_URL=http://catalog1:5001
+
+  order2:
+    build: ./order
+    volumes:
+      - ./order/orders.log:/app/orders.log
+    ports:
+      - "5004:5002"
+    depends_on:
+      - catalog2
+    environment:
+      - CATALOG_URL=http://catalog2:5001
 
   front:
     build: ./front
     stdin_open: true
     tty: true
     depends_on:
-      - catalog
-      - order
+      - catalog1
+      - catalog2
+      - order1
+      - order2
 
   admin:
     build: ./admin
     stdin_open: true
     tty: true
     depends_on:
-      - order
-      - catalog
+      - order1
+      - order2

@@ -1,5 +1,10 @@
 import requests
 
+ORDER_REPLICAS = [
+    "http://order1:5002",
+    "http://order2:5002",
+]
+
 def update_item(item_number, stock=None, cost=None):
     data = {}
     if stock is not None:
@@ -7,11 +12,16 @@ def update_item(item_number, stock=None, cost=None):
     if cost is not None:
         data["cost"] = cost
 
-    try:
-        resp = requests.post(f"http://order:5002/admin_update/{item_number}", json=data)
-        print(f"[ADMIN] Response: {resp.status_code} - {resp.json()}")
-    except requests.exceptions.RequestException as e:
-        print(f"[ADMIN] Failed to update item: {e}")
+    for base_url in ORDER_REPLICAS:
+        try:
+            resp = requests.post(f"{base_url}/admin_update/{item_number}", json=data)
+            print(f"[ADMIN] Response from {base_url}: {resp.status_code} - {resp.json()}")
+            return
+        except requests.exceptions.RequestException as e:
+            print(f"[ADMIN] Failed to update item at {base_url}: {e}")
+
+    print("[ADMIN] All replicas failed to update the item.")
+
 
 def admin_cli():
     print("=== ADMIN MENU ===")

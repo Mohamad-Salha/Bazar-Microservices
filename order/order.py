@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
+import os
 import requests
 
 app = Flask(__name__)
@@ -13,7 +14,9 @@ def purchase():
     print(f"[ORDER] Received purchase request: {data}")
 
     try:
-        resp = requests.post(f"http://catalog:5001/decrease_stock/{item_number}")
+        CATALOG_URL = os.getenv("CATALOG_URL", "http://catalog:5001")
+        resp = requests.post(f"{CATALOG_URL}/decrease_stock/{item_number}")
+
         result = resp.json()
         print(f"[ORDER] Stock update response: {result}")
 
@@ -40,15 +43,14 @@ def purchase():
     return jsonify({"status": "success", "message": "Order placed"}), 200
 
 @app.route("/admin_update/<int:item_number>", methods=["POST"])
+
 def admin_update(item_number):
     data = request.get_json()
     print(f"[ORDER] Received admin update for item {item_number}: {data}")
 
     try:
-        resp = requests.post(
-            f"http://catalog:5001/update/{item_number}",
-            json=data
-        )
+        CATALOG_URL = os.getenv("CATALOG_URL", "http://catalog:5001")
+        resp = requests.post(f"{CATALOG_URL}/update/{item_number}", json=data)
         result = resp.json()
         print(f"[ORDER] Forwarded to catalog, response: {result}")
         return jsonify(result), resp.status_code
