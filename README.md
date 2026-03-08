@@ -16,15 +16,15 @@ Bazar is a distributed bookstore application split into independent microservice
 
 ```
 ┌─────────────────────────────────────────────────┐
-│                 Docker Compose                    │
-│                                                   │
+│                 Docker Compose                  │
+│                                                 │
 │  ┌─────────────┐  ┌──────────┐  ┌─────────────┐ │
-│  │   Catalog    │  │  Order   │  │    Admin     │ │
-│  │   Service    │  │ Service  │  │  Dashboard   │ │
-│  │  (Flask)     │  │ (Flask)  │  │  (Flask)     │ │
-│  │  Port 5001   │  │ Port 5002│  │  Port 5003   │ │
+│  │   Catalog   │  │  Order   │  │    Admin    │ │
+│  │   Service   │  │ Service  │  │  Dashboard  │ │
+│  │  (Flask)    │  │ (Flask)  │  │  (Flask)    │ │
+│  │  Port 500   │  │ Port 5002│  │  Port 5003  │ │
 │  └─────────────┘  └──────────┘  └─────────────┘ │
-│                                                   │
+│                                                 │
 └─────────────────────────────────────────────────┘
 ```
 
